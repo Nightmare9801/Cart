@@ -6,6 +6,7 @@
 /// 64-bit integer. It is used to store a hash value associated with the `Case` instance.
 /// * `packet`: The `packet` property in the `Case` struct is a field of type `String`. It likely
 /// represents some kind of data or information related to the case.
+#[derive(Clone)]
 pub(crate) struct Case {
     hash: u64,
     packet: String,

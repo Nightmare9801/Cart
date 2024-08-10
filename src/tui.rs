@@ -6,86 +6,55 @@ pub fn run_tui() {
     println!("Enter HELP to check the commands !!");
     let mut cart: Cart = Cart::new();
     loop {
-        let input = get_input();
-        if input.contains("HELP") {
+        let input: String = get_input();
+        if input.starts_with("HELP") {
             println!("ADD <Key> <String>        -> Insert A Case To The Database");
-            println!("REMOVE_NUM <Key(Number)>  -> Remove A Case From The Database With Primitive Key");
             println!("REMOVE <Key(String)>      -> Remove A Case From The Database With Key");
-            println!("GET_NUM <Key(Number)>     -> Get A Case From The Database With Primitive Key");
             println!("GET <Key(String)>         -> Get A Case From The Database With Key");
             println!("PRINT                     -> Print The Cart Cases");
             println!("HELP                      -> Display The Help Menu");
             println!("EXIT                      -> EXIT");
-        } else if input.contains("PRINT") {
+
+            continue;
+        } else if input.starts_with("PRINT") {
             cart.print();
-        } else if input.contains("ADD") {
+
+            continue;
+        } else if input.starts_with("ADD") {
             let breaker: Vec<&str> = input.split(" ").collect();
             let mut str: String = breaker[2].trim().to_owned();
             for i in 3..breaker.len() {
-                str += breaker[i].trim();
+                str += &(breaker[i].trim().to_owned() + &" ".to_owned());
             }
             cart.insert(str, breaker[1].to_owned());
-        } else if input.contains("REMOVE") {
+
+            continue;
+        } else if input.starts_with("REMOVE") {
             let breaker = match breaking(&input, 2) {
                 Some(value) => value,
                 None => continue,
             };
             cart.remove(breaker[1].trim().to_owned());
-        } else if input.contains("REMOVE_NUM") {
-            let breaker = match breaking(&input, 2) {
-                Some(value) => value,
-                None => continue,
-            };
 
-            let key_to_remove = match breaker[1].parse::<u64>() {
-                Ok(key) => key,
-                Err(_) => {
-                    eprintln!("Warning: '{}' is not a valid u64. Item removal failed.", breaker[1]);
-                    continue;
-                }
-            };
-        
-            cart.remove_primitive(key_to_remove);
-        } else if input.contains("GET") {
+            continue;
+        } else if input.starts_with("GET") {
             let breaker: Vec<&str> = match breaking(&input, 2) {
                 Some(value) => value,
                 None => continue,
             };
-            let getter: Option<Case> = cart.get(breaker[1].to_owned());
+            let getter: Option<Case> = cart.get(breaker[1].trim().to_owned());
             match getter {
-                Some(x) => println!("{}", x.get_packet()),
+                Some(x) => println!("The Case is: {}", x.get_packet()),
                 None => {
                     println!("Key is not present in the Cart.");
                     continue;
                 } 
             }
-        } else if input.contains("GET_NUM") {
-            let breaker = match breaking(&input, 2) {
-                Some(value) => value,
-                None => continue,
-            };
-
-            let key_to_remove = match breaker[1].parse::<u64>() {
-                Ok(key) => key,
-                Err(_) => {
-                    eprintln!("Warning: '{}' is not a valid u64. Item removal failed.", breaker[1]);
-                    continue;
-                }
-            };
-        
-            let getter: Option<Case> = cart.get_primitive(key_to_remove);
-            match getter {
-                Some(x) => println!("{}", x.get_packet()),
-                None => {
-                    println!("Key is not present in the Cart.");
-                    continue;
-                } 
-            }
-
-        } else if input.contains("EXIT"){
+        } else if input.starts_with("EXIT"){
             break;
         } else {
             println!("Wrong Command");
+            continue;
         }
     }
 }

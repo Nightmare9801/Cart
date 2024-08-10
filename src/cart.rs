@@ -47,24 +47,6 @@ impl Cart {
         case.set(ac_key.try_into().unwrap(), element);
         self.elements.push(case);
     }
-    /// The function `get_primitive` retrieves a primitive value associated with a given key from a data
-    /// structure.
-    /// 
-    /// Arguments:
-    /// 
-    /// * `key`: The `key` parameter is of type `u64`, which represents an unsigned 64-bit integer.
-    /// 
-    /// Returns:
-    /// 
-    /// The function `get_primitive` returns an `Option<Case>`.
-    pub fn get_primitive(&self, key: u64) -> Option<Case>{
-        let index = self.keys.iter().position(|&r| r == key);
-        match index {
-            Some(k) => Some(self.elements.get(k)),
-            None => None,
-        };
-        None
-    }
     /// This Rust function retrieves a value associated with a key from a data structure, returning an
     /// `Option` containing the value if the key is found.
     /// 
@@ -77,11 +59,14 @@ impl Cart {
     /// 
     /// The `get` function returns an `Option<Case>`.
     pub fn get(&mut self, key: String) -> Option<Case>{
+        //println!("{}", key);
         let ac_key = self.hasher.hash(key) as u64;
-        let index = self.keys.iter().position(|&r| r == ac_key);
+        //println!("{}", ac_key);
+        let index: Option<usize> = self.keys.iter().position(|&r| r == ac_key);
+        //println!("{}", index.unwrap());
         match index {
-            Some(k) => Some(self.elements.get(k)),
-            None => None,
+            Some(k) => return Some(self.elements.get(k).unwrap().clone()),
+            None => todo!(),
         };
         None
     }
@@ -94,21 +79,6 @@ impl Cart {
     pub fn remove(&mut self, key: String){
         let ac_key = self.hasher.hash(key) as u64;
         let index = self.keys.iter().position(|&r| r == ac_key);
-        match index {
-            Some(k) => {
-                self.remove_unsafe(k)
-            },
-            None => return,
-        };
-    }
-    /// The function `remove_primitive` removes a primitive value from a collection in Rust.
-    /// 
-    /// Arguments:
-    /// 
-    /// * `key`: The `key` parameter is the value of type `u64` that you want to remove from the list of
-    /// keys in the data structure.
-    pub fn remove_primitive(&mut self, key: u64){
-        let index = self.keys.iter().position(|&r| r == key);
         match index {
             Some(k) => {
                 self.remove_unsafe(k)
@@ -131,7 +101,7 @@ impl Cart {
         println!("Cart Contents:");
         println!("\tKeys\t\t\tElements");
         for i in 0..self.keys.len() {
-            println!("{}) {}:\t\t{:?}", i, self.keys[i], self.elements[i].get_packet());
+            println!("{}) {}:\t\t{:?}", (i + 1), self.keys[i], self.elements[i].get_packet());
         }
     }
     
